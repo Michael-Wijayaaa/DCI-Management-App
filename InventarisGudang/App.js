@@ -7,6 +7,10 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import LoginScreen from './src/screens/Login/LoginScreen'; 
 import HomeScreen from './src/screens/Home/HomeScreen';
+import StocksScreen from './src/screens/Stocks/StocksScreen';
+import AddScreen from './src/screens/Add/AddScreen';
+import TakeScreen from './src/screens/Take/TakeScreen';
+import ProfileScreen from './src/screens/Profile/ProfileScreen';
 import DrawerContainer from './src/screens/DrawerContainer/DrawerContainer';
 
 const Stack = createStackNavigator();
@@ -25,6 +29,10 @@ function MainNavigator() {
     >
       <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
       <Stack.Screen name='Home' component={HomeScreen} />
+      <Stack.Screen name='Stocks' component={StocksScreen} />
+      <Stack.Screen name='Add' component={AddScreen} />
+      <Stack.Screen name='Take' component={TakeScreen} />
+      <Stack.Screen name='Profile' component={ProfileScreen}/>
     </Stack.Navigator>
   )
 } 

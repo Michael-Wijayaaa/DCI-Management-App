@@ -7,12 +7,15 @@ import { auth } from "../Login/LoginScreen";
 
 export default function DrawerContainer(props) {
   const handleSignOut = () => {
+    /*
     auth
       .signOut()
       .then(() => {
         navigation.navigate("Login");
       })
       .catch(error => alert(error.message))
+      */
+      navigation.navigate('Login');
   }
 
   const { navigation } = props;
@@ -20,18 +23,34 @@ export default function DrawerContainer(props) {
     <View style={styles.content}>
       <View style={styles.container}>
         <MenuButton
-          title="HOME"
-          source={require("../../../assets/icons/home.png")}
+          title="RECORD"
+          source={require("../../../assets/icons/record.png")}
           onPress={() => {
             navigation.navigate("Home");
             navigation.closeDrawer();
           }}
         />
         <MenuButton
-          title="SEARCH"
-          source={require("../../../assets/icons/search.png")}
+          title="STOCKS"
+          source={require("../../../assets/icons/stocks.png")}
           onPress={() => {
-            navigation.navigate("Search");
+            navigation.navigate("Stocks");
+            navigation.closeDrawer();
+          }}
+        />
+        <MenuButton
+          title="ADD"
+          source={require("../../../assets/icons/add.png")}
+          onPress={() => {
+            navigation.navigate("Add");
+            navigation.closeDrawer();
+          }}
+        />
+        <MenuButton
+          title="TAKE"
+          source={require("../../../assets/icons/take.png")}
+          onPress={() => {
+            navigation.navigate("Take");
             navigation.closeDrawer();
           }}
         />
