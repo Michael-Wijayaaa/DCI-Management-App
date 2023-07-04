@@ -45,7 +45,7 @@ const LoginScreen = () => {
         const user = userCredentials.user;
         console.log('Logged in with:', user.email);
       })
-      .catch((error) => alert(error.message));
+      .catch((error) => alert('Check your email or password again!'));
   };
 
   function handlePress() {
