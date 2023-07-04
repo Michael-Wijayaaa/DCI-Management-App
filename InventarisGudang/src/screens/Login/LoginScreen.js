@@ -62,7 +62,6 @@ const LoginScreen = () => {
           source={require('../../../assets/icon.png')}
           style={styles.logo}
         />
-        <Text style={styles.logoName}>Inventaris Gudang</Text>
         <Text style={styles.logoName}>PT Dapoer Creative Indonesia</Text>
       </View>
 

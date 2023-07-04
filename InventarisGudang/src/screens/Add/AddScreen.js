@@ -53,7 +53,7 @@ export default function AddScreen(props) {
     };
   
     try {
-      const docRef = await addDoc(collection(db, 'stocks'), data);
+      const docRef = await addDoc(collection(db, 'record'), data);
       console.log('Data berhasil disimpan di Firestore dengan ID:', docRef.id);
     } catch (error) {
       console.log('Terjadi kesalahan saat menyimpan data ke Firestore:', error);
