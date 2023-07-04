@@ -1,8 +1,8 @@
 import React, { useState, useLayoutEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-//import { updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
-//import { auth } from '../Login/LoginScreen';
+import { updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
+import { auth } from '../Login/LoginScreen';
 import MenuImage from "../../components/MenuImage/MenuImage";
 import styles from './style';
 
@@ -98,6 +98,17 @@ export default function ProfileScreen(props) {
             <Text style={styles.passwordVisibilityButton}>
               {showPassword ? 'Hide Password' : 'Show Password'}
             </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button} onPress={() => {
+            handleUpdate();
+            navigation.goBack();
+          }}>
+            <Text>Update</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
+            <Text>Cancel</Text>
           </TouchableOpacity>
         </View>
       </View>

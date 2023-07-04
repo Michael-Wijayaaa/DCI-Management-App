@@ -23,7 +23,7 @@ export default function DrawerContainer(props) {
           title="RECORD"
           source={require("../../../assets/icons/record.png")}
           onPress={() => {
-            navigation.navigate("Home");
+            navigation.navigate("Record");
             navigation.closeDrawer();
           }}
         />
