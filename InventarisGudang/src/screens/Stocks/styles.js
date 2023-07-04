@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
   btnIcon: {
     height: 14,
     width: 14,
-    marginTop: 20,
+    marginTop: 50,
   },
   searchContainer: { 
     flexDirection: "row", 
