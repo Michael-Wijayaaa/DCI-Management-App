@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { FlatList, Text, View, Image, TouchableHighlight, Pressable } from "react-native";
+import { FlatList, Text, View, TouchableHighlight } from "react-native";
 import styles from "./styles";
 import MenuImage from "../../components/MenuImage/MenuImage";
 import { getCategoryName, getRecipesByRecipeName, getRecipesByCategoryName, getRecipesByIngredientName } from "../../data/MockDataAPI";
@@ -13,27 +13,16 @@ export default function SearchScreen(props) {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerLeft: () => (
-        <MenuImage
-          onPress={() => {
-            navigation.openDrawer();
-          }}
-        />
-      ),
       headerTitle: () => (
         <View style={styles.searchContainer}>
-          <Image style={styles.searchIcon} source={require("../../../assets/icons/search.png")} />
           <TextInput
             style={styles.searchInput}
             onChangeText={handleSearch}
             value={value}
           />
-          <Pressable onPress={() => handleSearch("")}>
-          <Image style={styles.searchIcon} source={require("../../../assets/icons/close.png")} />
-          </Pressable>
         </View>
       ),
-      headerRight: () => <View />,
+      
     });
   }, [value]);
 
@@ -60,17 +49,30 @@ export default function SearchScreen(props) {
 
   const renderRecipes = ({ item }) => (
     <TouchableHighlight underlayColor="rgba(73,182,77,0.9)" onPress={() => onPressRecipe(item)}>
-      <View style={styles.container}>
-        <Image style={styles.photo} source={{ uri: item.photo_url }} />
-        <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.category}>{getCategoryName(item.categoryId)}</Text>
+      <View style={styles.textContainer}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>{item.title}</Text>
+        </View>
+        <View style={styles.categoryContainer}>
+          <Text style={styles.category}>{getCategoryName(item.categoryId)}</Text>
+        </View>
       </View>
     </TouchableHighlight>
   );
 
   return (
-    <View>
-      <FlatList vertical showsVerticalScrollIndicator={false} numColumns={2} data={data} renderItem={renderRecipes} keyExtractor={(item) => `${item.recipeId}`} />
+    <View style={styles.container}>
+      <View style={styles.sidebarContainer}>
+        {/* Konten sidebar */}
+      </View>
+      <FlatList
+        vertical
+        showsVerticalScrollIndicator={false}
+        numColumns={2}
+        data={data}
+        renderItem={renderRecipes}
+        keyExtractor={(item) => `${item.recipeId}`}
+      />
     </View>
   );
 }
