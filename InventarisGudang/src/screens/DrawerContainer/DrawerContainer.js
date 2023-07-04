@@ -7,15 +7,12 @@ import { auth } from "../Login/LoginScreen";
 
 export default function DrawerContainer(props) {
   const handleSignOut = () => {
-    /*
     auth
       .signOut()
       .then(() => {
         navigation.navigate("Login");
       })
       .catch(error => alert(error.message))
-      */
-      navigation.navigate('Login');
   }
 
   const { navigation } = props;
