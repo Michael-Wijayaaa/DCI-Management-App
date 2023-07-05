@@ -45,7 +45,7 @@ const LoginScreen = () => {
         const user = userCredentials.user;
         console.log('Logged in with:', user.email);
       })
-      .catch((error) => alert(error.message));
+      .catch((error) => alert('Check your email or password again!'));
   };
 
   function handlePress() {
@@ -62,7 +62,6 @@ const LoginScreen = () => {
           source={require('../../../assets/icon.png')}
           style={styles.logo}
         />
-        <Text style={styles.logoName}>Inventaris Gudang</Text>
         <Text style={styles.logoName}>PT Dapoer Creative Indonesia</Text>
       </View>
 

@@ -10,10 +10,10 @@ export default function DrawerContainer(props) {
     auth
       .signOut()
       .then(() => {
-        navigation.navigate("Login");
+        navigation.replace("Login");
       })
-      .catch(error => alert(error.message))
-  }
+      .catch(error => alert(error.message));
+  };
 
   const { navigation } = props;
   return (
