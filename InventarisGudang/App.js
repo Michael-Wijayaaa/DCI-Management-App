@@ -9,9 +9,6 @@ import LoginScreen from './src/screens/Login/LoginScreen';
 import HomeScreen from './src/screens/Home/HomeScreen';
 import StocksScreen from './src/screens/Stocks/StocksScreen';
 import AddScreen from './src/screens/Add/AddScreen';
-import NewItemScreen from './src/screens/NewItem/NewItemScreen';
-import ExistingItemScreen from './src/screens/ExistingItem/ExistingItemScreen';
-import RemainingItemScreen from './src/screens/RemainingItem/RemainingItemScreen';
 import TakeScreen from './src/screens/Take/TakeScreen';
 import ProfileScreen from './src/screens/Profile/ProfileScreen';
 import DrawerContainer from './src/screens/DrawerContainer/DrawerContainer';
@@ -34,9 +31,6 @@ function MainNavigator() {
       <Stack.Screen name='Record' component={HomeScreen} />
       <Stack.Screen name='Stocks' component={StocksScreen} />
       <Stack.Screen name='Add' component={AddScreen} />
-      <Stack.Screen name='New Item' component={NewItemScreen} />
-      <Stack.Screen name='Existing Item' component={ExistingItemScreen} />
-      <Stack.Screen name='Remaining Item' component={RemainingItemScreen} />
       <Stack.Screen name='Take' component={TakeScreen} />
       <Stack.Screen name='Profile' component={ProfileScreen} />
     </Stack.Navigator>
