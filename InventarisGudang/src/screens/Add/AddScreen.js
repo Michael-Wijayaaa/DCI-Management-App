@@ -2,7 +2,7 @@ import React, { useState, useLayoutEffect, useEffect } from 'react';
 import { View, Text, TouchableOpacity, TextInput, FlatList, Image } from 'react-native';
 import styles from './styles';
 import MenuImage from "../../components/MenuImage/MenuImage";
-import * as ImagePicker from 'expo-image-picker';
+//import * as ImagePicker from 'expo-image-picker';
 import { auth, db } from '../Login/LoginScreen';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
 

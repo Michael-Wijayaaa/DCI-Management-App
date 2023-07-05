@@ -1,5 +1,5 @@
 {
-  "name": "IG DCI",
+  "name": "DCI Management App",
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
@@ -16,7 +16,6 @@
     "@react-navigation/stack": "^6.3.17",
     "expo": "~48.0.18",
     "expo-constants": "^14.2.1",
-    "expo-image-picker": "^14.1.1",
     "expo-status-bar": "~1.4.4",
     "firebase": "^9.23.0",
     "react": "18.2.0",
