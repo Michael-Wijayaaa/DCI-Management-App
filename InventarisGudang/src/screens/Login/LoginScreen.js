@@ -1,6 +1,6 @@
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation, useBackHandler } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image, BackHandler, Alert } from 'react-native';
 import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 
 import { initializeApp } from 'firebase/app';
@@ -17,6 +17,7 @@ const firebaseConfig = {
   messagingSenderId: "844624800675",
   appId: "1:844624800675:web:8374b2378bc234f2d5c816"
 };
+
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth();
@@ -39,8 +40,31 @@ const LoginScreen = () => {
     return unsubscribe;
   }, []);
 
+  useEffect(() => {
+    const backAction = () => {
+      if (navigation.canGoBack()) {
+        Alert.alert("Exit App", "Are you sure you want to exit?", [
+          {
+            text: "Cancel",
+            onPress: () => null,
+            style: "cancel"
+          },
+          { text: "Exit", onPress: () => BackHandler.exitApp() }
+        ]);
+      }
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
   const handleLogin = () => {
-    signInWithEmailAndPassword(auth, email, password)
+    signInWithEmailAndPassword(auth, (email + "@admin.com"), password)
       .then((userCredentials) => {
         const user = userCredentials.user;
         console.log('Logged in with:', user.email);
@@ -67,7 +91,7 @@ const LoginScreen = () => {
 
       <View style={styles.inputContainer}>
         <TextInput
-          placeholder="Email"
+          placeholder="Username"
           value={email}
           onChangeText={text => setEmail(text)}
           style={styles.input}
@@ -84,7 +108,7 @@ const LoginScreen = () => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           onPress={handleLogin}
-          //onPress={handlePress}
+          // onPress={handlePress}
           style={styles.button}
         >
           <Text style={styles.buttonText}>Login</Text>

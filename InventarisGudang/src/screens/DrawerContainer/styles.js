@@ -12,7 +12,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'flex-start',
     paddingHorizontal: 20
-  }
+  },
+  DropList: {
+    paddingHorizontal: 20,
+    borderTopWidth: 1,
+    alignItems: 'flex-start',
+    borderTopColor: '#D8D8D8',
+  },
 });
 
 export default styles;
