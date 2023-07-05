@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "InventarisGudang",
-    "slug": "InventarisGudang",
+    "name": "DCI Management App",
+    "slug": "DCI Management App",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
