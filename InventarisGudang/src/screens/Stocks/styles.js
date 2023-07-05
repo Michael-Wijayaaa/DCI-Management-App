@@ -1,18 +1,17 @@
 import { StyleSheet } from "react-native";
-import { RecipeCard } from "../../AppStyles";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFF",
   },
-  searchContainer: { 
-    flexDirection: "row", 
-    alignItems: "center", 
-    backgroundColor: "#EDEDED", 
-    borderRadius: 10, 
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#EDEDED",
+    borderRadius: 10,
     width: 250,
-    justifyContent: "space-around"
+    justifyContent: "space-around",
   },
   searchIcon: {
     width: 20,
@@ -29,23 +28,21 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
     paddingRight: 5,
   },
-  textContainer: {
+  listItem: {
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: 10,
-    marginBottom: 10,
     marginHorizontal: 10,
     padding: 10,
-    flexWrap: "nowrap",
-    
-  },
-  titleContainer: {
-    marginBottom: 5,
-  },
-  categoryContainer: {
-    marginBottom: 5,
+    backgroundColor: "#FFF",
+    borderRadius: 10,
+    elevation: 2,
   },
   title: {
+    flex: 1,
     fontSize: 16,
     fontWeight: "bold",
+    marginLeft: 10,
   },
   category: {
     fontSize: 14,
