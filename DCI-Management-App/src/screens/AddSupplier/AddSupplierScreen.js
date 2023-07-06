@@ -7,16 +7,12 @@ import { getFirestore, collection, addDoc, doc, getDocs } from 'firebase/firesto
 
 export default function AddStockScreen(props) {
   const [nama, setNama] = useState('');
-  const [supplier, setSupplier] = useState('');
-  const [jumlah, setJumlah] = useState(0);
-  const [keterangan, setKeterangan] = useState('');
-  const [barangBaru, setBarangBaru] = useState(true);
-  const [isNamaActive, setIsNamaActive] = useState(false); 
-  const [isSupplierActive, setIsSupplierActive] = useState(false); 
-  const [namaBarangRekomendasi, setNamaBarangRekomendasi] = useState([]);
-  const [supplierRekomendasi, setSupplierRekomendasi] = useState([]);
-  const [namaBarangList, setNamaBarangList] = useState([]);
-  const [supplierList, setSupplierList] = useState([]);
+  const [PT, setPT] = useState('');
+  const [alamat, setAlamat] = useState('');
+  const [noTelp, setNoTelp] = useState('');
+  const [isPTActive, setIsPTActive] = useState(false);
+  const [PTRekomendasi, setPTRekomendasi] = useState([]);
+  const [PTList, setPTList] = useState([]);
 
   const { navigation } = props;
 
@@ -36,136 +32,74 @@ export default function AddStockScreen(props) {
     });
   }, []);
 
-  const fetchInventory = async () => {
+  const fetchPT = async () => {
     try {
-      const inventorySnapshot = await getDocs(collection(db, 'Inventory'));
-      const namaBarangArray = [];
-      inventorySnapshot.forEach((doc) => {
+      const PTSnapshot = await getDocs(collection(db, 'Supplier'));
+      const PTArray = [];
+      PTSnapshot.forEach((doc) => {
         const data = doc.data();
-        const namaBarang = data?.NamaBarang;
-        if (namaBarang) {
-          namaBarangArray.push(namaBarang);
+        const namaPT = data?.NamaPT;
+        if (namaPT) {
+          PTArray.push(namaPT);
         }
       });
-      namaBarangArray.sort();
-      setNamaBarangList(namaBarangArray);
-      console.log('Nama Barang dalam Inventory:', namaBarangArray);
-    } catch (error) {
-      console.log('Terjadi kesalahan saat mengambil data dari Firebase:', error);
-    }
-  };
-
-  const fetchSupplier = async () => {
-    try {
-      const supplierSnapshot = await getDocs(collection(db, 'Supplier'));
-      const supplierArray = [];
-      supplierSnapshot.forEach((doc) => {
-        const data = doc.data();
-        const namaSupplier = data?.NamaSupplier;
-        if (namaSupplier) {
-          supplierArray.push(namaSupplier);
-        }
-      });
-      supplierArray.sort();
-      setSupplierList(supplierArray);
-      console.log('Nama Supplier dalam data:', supplierArray);
+      PTArray.sort();
+      setPTList(PTArray);
+      console.log('Nama PT Supplier dalam data:', PTList);
     } catch (error) {
       console.log('Terjadi kesalahan saat mengambil data dari Firebase:', error);
     }
   };
   
   useEffect(() => {
-    fetchInventory();
-    fetchSupplier();
+    fetchPT();
   }, []);
 
-  const handleAddStock = async () => {
+  const handleAddSupplier = async () => {
     const data = {
-      NamaBarang: nama,
-      NamaSupplier: supplier,
-      Jumlah: jumlah,
-      Keterangan: keterangan,
-      Status: barangBaru,
+      NamaSupplier: nama,
+      NamaPT: PT,
+      NoTelp: noTelp,
+      Alamat: alamat,
     };
   
     try {
-      const docRef = await addDoc(collection(db, 'Inventory'), data);
+      const docRef = await addDoc(collection(db, 'Supplier'), data);
       console.log('Data berhasil disimpan di Firestore dengan ID:', docRef.id);
     } catch (error) {
       console.log('Terjadi kesalahan saat menyimpan data ke Firestore:', error);
     }
   
     setNama('');
-    setSupplier('');
-    setJumlah(0);
-    setKeterangan('');
-  
-    if (!barangBaru) {
-      setBarangBaru(true);
-    }
-  
+    setPT('');
+    setNoTelp('');
+    setAlamat('');
+    
     navigation.navigate('Home');
   };    
 
   const handleCancel = () => {
     setNama('');
-    setSupplier('');
-    setJumlah(0);
-    setKeterangan('');
-
-    if (!barangBaru) {
-      setBarangBaru(true);
-      setBarangSisa(false);
-    }
+    setPT('');
+    setNoTelp('');
+    setAlamat('');
     
     navigation.navigate('Home');
   };
-
-  const handleIncreaseJumlah = () => {
-    if (jumlah === '') {
-      setJumlah(1);
-    } else {
-      setJumlah(jumlah + 1);
-    }
-  };
   
-  const handleDecreaseJumlah = () => {
-    if (jumlah > 0) {
-      setJumlah(jumlah - 1);
-    }
-  };
-
-  const handleNamaChange = (text) => {
-    setNama(text);
-    let filteredNamaBarang = namaBarangList.filter((item) =>
+  const handlePTChange = (text) => {
+    setPT(text);
+    let filteredPT = PTList.filter((item) =>
       item.toLowerCase().includes(text.toLowerCase())
     );
     if (text === '') {
-      filteredNamaBarang = [];
+      filteredPT = [];
     }
-    setNamaBarangRekomendasi(filteredNamaBarang);
+    setPTRekomendasi(filteredPT);
   };
-  
-  const handleSupplierChange = (text) => {
-    setSupplier(text);
-    let filteredSupplier = supplierList.filter((item) =>
-      item.toLowerCase().includes(text.toLowerCase())
-    );
-    if (text === '') {
-      filteredSupplier = [];
-    }
-    setSupplierRekomendasi(filteredSupplier);
-  };
-  
 
-  const renderNamaBarangRekomendasi = ({ item }) => (
-    <TouchableOpacity onPress={() => setNama(item)}>
-      <Text style={styles.rekomendasiText}>{item}</Text>
-    </TouchableOpacity>
-  );
-
-  const renderSupplierRekomendasi = ({ item }) => (
-    <TouchableOpacity onPress={() => setSupplier(item)}>
+  const renderPTRekomendasi = ({ item }) => (
+    <TouchableOpacity onPress={() => setPT(item)}>
       <Text style={styles.rekomendasiText}>{item}</Text>
     </TouchableOpacity>
   );
@@ -181,19 +115,19 @@ export default function AddStockScreen(props) {
       <TextInput
         style={styles.input}
         placeholder="Nama PT Supplier"
-        value={supplier}
-        onChangeText={handleSupplierChange}
+        value={PT}
+        onChangeText={handlePTChange}
         autoCompleteType="off"
         autoCorrect={false}
         dataDetectorTypes="none"
         spellCheck={false}
-        onFocus={() => setIsSupplierActive(true)}
-        onBlur={() => setIsSupplierActive(false)}
+        onFocus={() => setIsPTActive(true)}
+        onBlur={() => setIsPTActive(false)}
       />
-      {isSupplierActive && supplierRekomendasi.length > 0 && (
+      {isPTActive && PTRekomendasi.length > 0 && (
         <FlatList
-          data={supplierRekomendasi}
-          renderItem={renderSupplierRekomendasi}
+          data={PTRekomendasi}
+          renderItem={renderPTRekomendasi}
           keyExtractor={(item) => item}
           style={styles.rekomendasiContainer}
           keyboardShouldPersistTaps="always"
@@ -202,17 +136,17 @@ export default function AddStockScreen(props) {
       <TextInput
         style={styles.input}
         placeholder="No. Telp"
-        value={nama}
-        onChangeText={setNama}
+        value={noTelp}
+        onChangeText={setNoTelp}
       />
       <TextInput
         style={styles.additionalInfoInput}
         placeholder="Alamat"
-        value={keterangan}
-        onChangeText={setKeterangan}
+        value={alamat}
+        onChangeText={setAlamat}
         multiline={true}
       />
-      <TouchableOpacity style={styles.addButton} onPress={handleAddStock}>
+      <TouchableOpacity style={styles.addButton} onPress={handleAddSupplier}>
         <Text style={styles.addButtonText}>Add</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>

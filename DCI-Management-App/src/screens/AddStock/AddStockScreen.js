@@ -49,7 +49,7 @@ export default function AddStockScreen(props) {
       });
       namaBarangArray.sort();
       setNamaBarangList(namaBarangArray);
-      console.log('Nama Barang dalam Inventory:', namaBarangArray);
+      //console.log('Nama Barang dalam Inventory:', namaBarangList);
     } catch (error) {
       console.log('Terjadi kesalahan saat mengambil data dari Firebase:', error);
     }
@@ -59,20 +59,30 @@ export default function AddStockScreen(props) {
     try {
       const supplierSnapshot = await getDocs(collection(db, 'Supplier'));
       const supplierArray = [];
+      const PTArray = [];
+      const mixArray = [];
       supplierSnapshot.forEach((doc) => {
         const data = doc.data();
         const namaSupplier = data?.NamaSupplier;
         if (namaSupplier) {
           supplierArray.push(namaSupplier);
         }
+        const namaPT = data?.NamaPT;
+        if (namaPT) {
+          PTArray.push(namaPT);
+        }
       });
-      supplierArray.sort();
-      setSupplierList(supplierArray);
-      console.log('Nama Supplier dalam data:', supplierArray);
+      supplierArray.forEach((supplier, index) => {
+        const PT = PTArray[index] || '';
+        const mix = `${supplier} - ${PT}`;
+        mixArray.push(mix);
+      });
+      setSupplierList(mixArray);
+      //console.log('Data Supplier:', supplierList);
     } catch (error) {
       console.log('Terjadi kesalahan saat mengambil data dari Firebase:', error);
     }
-  };
+  };  
   
   useEffect(() => {
     fetchInventory();
@@ -195,7 +205,7 @@ export default function AddStockScreen(props) {
       )}
       <TextInput
         style={styles.input}
-        placeholder="Nama Supplier"
+        placeholder="Nama Supplier - PT Supplier"
         value={supplier}
         onChangeText={handleSupplierChange}
         autoCompleteType="off"
