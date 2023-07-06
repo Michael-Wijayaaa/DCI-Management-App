@@ -33,7 +33,7 @@ const LoginScreen = () => {
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        navigation.replace('Record');
+        navigation.replace('Home');
       }
     });
 

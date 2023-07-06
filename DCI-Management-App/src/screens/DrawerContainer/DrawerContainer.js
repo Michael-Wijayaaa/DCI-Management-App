@@ -37,10 +37,10 @@ export default function DrawerContainer(props) {
     <View style={styles.content}>
       <View style={styles.container}>
         <MenuButton
-          title="RECORD"
-          source={require("../../../assets/icons/record.png")}
+          title="HOME"
+          source={require("../../../assets/icons/home.png")}
           onPress={() => {
-            navigation.navigate("Record");
+            navigation.navigate("Home");
             navigation.closeDrawer();
           }}
         />
@@ -49,7 +49,7 @@ export default function DrawerContainer(props) {
           title="LOG DATA"
           source={require("../../../assets/icons/logdata.png")}
           onPress={() => {
-            navigation.navigate("Record");
+            navigation.navigate("Log Data");
             navigation.closeDrawer();
           }}
         />
@@ -73,18 +73,26 @@ export default function DrawerContainer(props) {
         {isProductionGroupOpen && (
           <View style={styles.DropList}>
             <MenuButton
-              title="STOCKS"
-              source={require("../../../assets/icons/stocks.png")}
+              title="INVENTORY"
+              source={require("../../../assets/icons/inventory.png")}
               onPress={() => {
                 navigation.navigate("Stocks");
                 navigation.closeDrawer();
               }}
             />
             <MenuButton
-              title="ADD"
-              source={require("../../../assets/icons/add.png")}
+              title="ADD STOCK"
+              source={require("../../../assets/icons/addstock.png")}
               onPress={() => {
-                navigation.navigate("Add");
+                navigation.navigate("Add Stock");
+                navigation.closeDrawer();
+              }}
+            />
+            <MenuButton
+              title="ADD SUPPLIER"
+              source={require("../../../assets/icons/adduser.png")}
+              onPress={() => {
+                navigation.navigate("Add Supplier");
                 navigation.closeDrawer();
               }}
             />
@@ -101,7 +109,7 @@ export default function DrawerContainer(props) {
 
         <MenuButton
           title={`ANALYTICS${isAnalyticsGroupOpen ? "   ↑" : "   ↓"}`}
-          source={require("../../../assets/icons/stocks.png")}
+          source={require("../../../assets/icons/analytics.png")}
           onPress={toggleAnalyticsGroup}
         />
         {isAnalyticsGroupOpen && (
@@ -110,7 +118,7 @@ export default function DrawerContainer(props) {
               title="CLIENT INFO"
               source={require("../../../assets/icons/clientinfo.png")}
               onPress={() => {
-                navigation.navigate("Record");
+                navigation.navigate("Client Info");
                 navigation.closeDrawer();
               }}
             />
@@ -119,7 +127,7 @@ export default function DrawerContainer(props) {
               title="INCOME"
               source={require("../../../assets/icons/income.png")}
               onPress={() => {
-                navigation.navigate("Record");
+                navigation.navigate("Income");
                 navigation.closeDrawer();
               }}
             />
