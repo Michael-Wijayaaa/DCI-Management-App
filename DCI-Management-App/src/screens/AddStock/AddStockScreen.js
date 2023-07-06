@@ -3,7 +3,8 @@ import { View, Text, TouchableOpacity, TextInput, FlatList, Image } from 'react-
 import styles from './styles';
 import MenuImage from "../../components/MenuImage/MenuImage";
 import { auth, db } from '../Login/LoginScreen';
-import { getFirestore, collection, addDoc, doc, getDocs } from 'firebase/firestore';
+import { doc, updateDoc, addDoc, collection, getDocs, query, where } from 'firebase/firestore';
+
 
 export default function AddStockScreen(props) {
   const [nama, setNama] = useState('');
@@ -39,15 +40,15 @@ export default function AddStockScreen(props) {
   const fetchInventory = async () => {
     try {
       const inventorySnapshot = await getDocs(collection(db, 'Inventory'));
-      const namaBarangArray = [];
+      const namaBarangSet = new Set();
       inventorySnapshot.forEach((doc) => {
         const data = doc.data();
         const namaBarang = data?.NamaBarang;
         if (namaBarang) {
-          namaBarangArray.push(namaBarang);
+          namaBarangSet.add(namaBarang);
         }
       });
-      namaBarangArray.sort();
+      const namaBarangArray = Array.from(namaBarangSet).sort();
       setNamaBarangList(namaBarangArray);
       //console.log('Nama Barang dalam Inventory:', namaBarangList);
     } catch (error) {
@@ -58,20 +59,22 @@ export default function AddStockScreen(props) {
   const fetchSupplier = async () => {
     try {
       const supplierSnapshot = await getDocs(collection(db, 'Supplier'));
-      const supplierArray = [];
-      const PTArray = [];
+      const supplierSet = new Set();
+      const PTSet = new Set();
       const mixArray = [];
       supplierSnapshot.forEach((doc) => {
         const data = doc.data();
         const namaSupplier = data?.NamaSupplier;
         if (namaSupplier) {
-          supplierArray.push(namaSupplier);
+          supplierSet.add(namaSupplier);
         }
         const namaPT = data?.NamaPT;
         if (namaPT) {
-          PTArray.push(namaPT);
+          PTSet.add(namaPT);
         }
       });
+      const supplierArray = Array.from(supplierSet);
+      const PTArray = Array.from(PTSet);
       supplierArray.forEach((supplier, index) => {
         const PT = PTArray[index] || '';
         const mix = `${supplier} - ${PT}`;
@@ -82,7 +85,7 @@ export default function AddStockScreen(props) {
     } catch (error) {
       console.log('Terjadi kesalahan saat mengambil data dari Firebase:', error);
     }
-  };  
+  };    
   
   useEffect(() => {
     fetchInventory();
@@ -90,32 +93,64 @@ export default function AddStockScreen(props) {
   }, []);
 
   const handleAddStock = async () => {
-    const data = {
-      NamaBarang: nama,
-      NamaSupplier: supplier,
-      Jumlah: jumlah,
-      Keterangan: keterangan,
-      Status: barangBaru,
-    };
+    const inventoryRef = collection(db, 'Inventory');
   
-    try {
-      const docRef = await addDoc(collection(db, 'Inventory'), data);
-      console.log('Data berhasil disimpan di Firestore dengan ID:', docRef.id);
-    } catch (error) {
-      console.log('Terjadi kesalahan saat menyimpan data ke Firestore:', error);
+    const inventoryQuery = await getDocs(
+      query(inventoryRef, where('NamaBarang', '==', nama), where('NamaSupplier', '==', supplier), where('Status', '==', barangBaru))
+    );
+  
+    if (!inventoryQuery.empty) {
+      inventoryQuery.forEach(async (doc) => {
+        const existingData = doc.data();
+        const existingJumlah = existingData?.Jumlah || 0;
+        const newJumlah = existingJumlah + jumlah;
+  
+        try {
+          await updateDoc(doc.ref, { Jumlah: newJumlah });
+          console.log('Data berhasil diupdate di Firestore dengan ID:', doc.id);
+        } catch (error) {
+          console.log('Terjadi kesalahan saat mengupdate data di Firestore:', error);
+        }
+      });
+  
+      setNama('');
+      setSupplier('');
+      setJumlah(0);
+      setKeterangan('');
+  
+      if (!barangBaru) {
+        setBarangBaru(true);
+      }
+  
+      navigation.navigate('Home');
+    } else {
+      const data = {
+        NamaBarang: nama,
+        NamaSupplier: supplier,
+        Jumlah: jumlah,
+        Keterangan: keterangan,
+        Status: barangBaru,
+      };
+  
+      try {
+        const docRef = await addDoc(inventoryRef, data);
+        console.log('Data berhasil disimpan di Firestore dengan ID:', docRef.id);
+      } catch (error) {
+        console.log('Terjadi kesalahan saat menyimpan data ke Firestore:', error);
+      }
+  
+      setNama('');
+      setSupplier('');
+      setJumlah(0);
+      setKeterangan('');
+  
+      if (!barangBaru) {
+        setBarangBaru(true);
+      }
+  
+      navigation.navigate('Home');
     }
-  
-    setNama('');
-    setSupplier('');
-    setJumlah(0);
-    setKeterangan('');
-  
-    if (!barangBaru) {
-      setBarangBaru(true);
-    }
-  
-    navigation.navigate('Home');
-  };    
+  };   
 
   const handleCancel = () => {
     setNama('');

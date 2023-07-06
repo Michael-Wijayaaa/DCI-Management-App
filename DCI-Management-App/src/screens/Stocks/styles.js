@@ -12,6 +12,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: 250,
     justifyContent: "space-around",
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
   searchIcon: {
     width: 20,
@@ -27,6 +29,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
     paddingLeft: 5,
     paddingRight: 5,
+    fontSize: 16,
   },
   listItem: {
     flexDirection: "row",
@@ -36,13 +39,19 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "#FFF",
     borderRadius: 10,
-    elevation: 2,
+    borderWidth:1,
+  },
+  itemContainer: {
+    flex: 1,
+    marginVertical: 10,
   },
   title: {
-    flex: 1,
     fontSize: 16,
     fontWeight: "bold",
     marginLeft: 10,
+  },
+  categoryContainer: {
+    marginTop: 5,
   },
   category: {
     fontSize: 14,

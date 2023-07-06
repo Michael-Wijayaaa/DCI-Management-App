@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, TextInput, FlatList, Image } from 'react-
 import styles from './styles';
 import MenuImage from "../../components/MenuImage/MenuImage";
 import { auth, db } from '../Login/LoginScreen';
-import { getFirestore, collection, addDoc, doc, getDocs } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, doc, getDocs, query, where } from 'firebase/firestore';
 
 export default function AddStockScreen(props) {
   const [nama, setNama] = useState('');
@@ -35,21 +35,21 @@ export default function AddStockScreen(props) {
   const fetchPT = async () => {
     try {
       const PTSnapshot = await getDocs(collection(db, 'Supplier'));
-      const PTArray = [];
+      const PTSet = new Set();
       PTSnapshot.forEach((doc) => {
         const data = doc.data();
         const namaPT = data?.NamaPT;
         if (namaPT) {
-          PTArray.push(namaPT);
+          PTSet.add(namaPT);
         }
       });
-      PTArray.sort();
+      const PTArray = Array.from(PTSet).sort();
       setPTList(PTArray);
       //console.log('Nama PT Supplier dalam data:', PTList);
     } catch (error) {
       console.log('Terjadi kesalahan saat mengambil data dari Firebase:', error);
     }
-  };
+  };    
   
   useEffect(() => {
     fetchPT();
@@ -58,21 +58,13 @@ export default function AddStockScreen(props) {
   const handleAddSupplier = async () => {
     const supplierRef = collection(db, 'Supplier');
     
-    // Mengecek apakah namaSupplier sudah ada dalam database
-    const supplierQuery = await getDocs(query(supplierRef, where('NamaSupplier', '==', nama)));
-    if (!supplierQuery.empty) {
-      console.log('Nama Supplier sudah ada dalam database');
-      return; // Menghentikan proses jika sudah ada
-    }
-    
-    // Mengecek apakah namaPT sudah ada dalam database
-    const PTQuery = await getDocs(query(supplierRef, where('NamaPT', '==', PT)));
-    if (!PTQuery.empty) {
-      console.log('Nama PT sudah ada dalam database');
-      return; // Menghentikan proses jika sudah ada
+    const Query = await getDocs(query(supplierRef, where('NamaSupplier', '==', nama), where('NamaPT', '==', PT)));
+    if (!Query.empty) {
+      console.log('Nama Supplier dengan PT yang sama sudah ada dalam database');
+      handleCancel();
+      return;
     }
   
-    // Menambahkan data ke database
     const data = {
       NamaSupplier: nama,
       NamaPT: PT,

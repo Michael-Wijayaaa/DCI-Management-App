@@ -1,15 +1,17 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import { FlatList, Text, View, Image, TouchableHighlight, Pressable } from "react-native";
-import styles from "./styles";
+import React, { useState, useLayoutEffect, useEffect } from 'react';
+import { View, Text, TouchableOpacity, TextInput, FlatList, Image, Pressable } from 'react-native';
+import styles from './styles';
 import MenuImage from "../../components/MenuImage/MenuImage";
-import { getCategoryName, getRecipesByRecipeName, getRecipesByCategoryName, getRecipesByIngredientName } from "../../data/MockDataAPI";
-import { TextInput } from "react-native-gesture-handler";
+import { auth, db } from '../Login/LoginScreen';
+import { doc, updateDoc, addDoc, collection, getDocs, query, where } from 'firebase/firestore';
 
-export default function SearchScreen(props) {
+
+export default function AddStockScreen(props) {
+  const [nama, setNama] = useState('');  
+  const [namaBarangRekomendasi, setNamaBarangRekomendasi] = useState([]);
+  const [barangData, setBarangData] = useState([]);
+
   const { navigation } = props;
-
-  const [value, setValue] = useState("");
-  const [data, setData] = useState([]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -25,65 +27,95 @@ export default function SearchScreen(props) {
           <Image style={styles.searchIcon} source={require("../../../assets/icons/search.png")} />
           <TextInput
             style={styles.searchInput}
-            onChangeText={handleSearch}
-            value={value}
+            onChangeText={handleNamaChange}
+            value={nama}
           />
-          <Pressable onPress={() => handleSearch("")}>
+          <Pressable onPress={() => {setNama(""), handleNamaChange("")}}>
             <Image style={styles.searchIcon} source={require("../../../assets/icons/close.png")} />
           </Pressable>
         </View>
       ),
       headerRight: () => <View />,
     });
-  }, [value]);
+  }, [nama]);
 
-  useEffect(() => {}, [value]);
-
-  const handleSearch = (text) => {
-    setValue(text);
-    var recipeArray1 = getRecipesByRecipeName(text);
-    var recipeArray2 = getRecipesByCategoryName(text);
-    var recipeArray3 = getRecipesByIngredientName(text);
-    var aux = recipeArray1.concat(recipeArray2);
-    var recipeArray = [...new Set(aux)];
-
-    if (text == "") {
-      setData([]);
-    } else {
-      setData(recipeArray);
+  const fetchInventory = async () => {
+    try {
+      const inventorySnapshot = await getDocs(collection(db, 'Inventory'));
+      const barangArray = [];
+      inventorySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const namaBarang = data?.NamaBarang;
+        const namaSupplier = data?.NamaSupplier;
+        const jumlah = data?.Jumlah;
+        const status = data?.Status;
+        if (namaBarang) {
+          barangArray.push({
+            namaBarang,
+            namaSupplier,
+            jumlah,
+            status,
+          });
+        }
+      });
+      setBarangData(barangArray);
+      setNamaBarangRekomendasi(barangArray);
+    } catch (error) {
+      console.log('Terjadi kesalahan saat mengambil data dari Firebase:', error);
     }
+  };    
+  
+  useEffect(() => {
+    fetchInventory();
+  }, []);   
+
+  const handleNamaChange = (text) => {
+    setNama(text);
+    let filteredBarang = [];
+    
+    if (text === '') {
+      filteredBarang = barangData;
+    } else {
+      filteredBarang = barangData.filter((item) =>
+        item.namaBarang.toLowerCase().includes(text.toLowerCase())
+      );
+    }
+  
+    setNamaBarangRekomendasi(filteredBarang);
+  };  
+
+  const onPressItem = (item) => {
+    navigation.navigate("Home");
   };
 
-  const onPressRecipe = (item) => {
-    navigation.navigate("Recipe", { item });
-  };
-
-  const renderRecipes = ({ item }) => (
-    <TouchableHighlight underlayColor="rgba(73,182,77,0.9)" onPress={() => onPressRecipe(item)}>
+  const renderItem = ({ item }) => (
+    <TouchableOpacity onPress={() => onPressItem(item)}>
       <View style={styles.listItem}>
         <View style={styles.itemContainer}>
-          <Text style={styles.title}>{item.title}</Text>
+          <Text style={styles.title}>{item.namaBarang}</Text>
           <View style={styles.categoryContainer}>
-            <Text style={styles.category}>{getCategoryName(item.categoryId)}</Text>
+            <Text style={styles.category}>{item.namaSupplier}</Text>
+          </View>
+          <View style={styles.categoryContainer}>
+            <Text style={styles.category}>Jumlah: {item.jumlah}</Text>
+          </View>
+          <View style={styles.categoryContainer}>
+            <Text style={styles.category}>Status: {item.status ? 'Baru' : 'Sisa'}</Text>
           </View>
         </View>
-        <Image style={styles.photo} source={{ uri: item.photo_url }} />
       </View>
-    </TouchableHighlight>
+    </TouchableOpacity>
   );
-  
 
   return (
     <View style={styles.container}>
       <FlatList
         vertical
         showsVerticalScrollIndicator={false}
-        numColumns={1}
-        data={data}
-        renderItem={renderRecipes}
-        keyExtractor={(item) => `${item.recipeId}`}
+        data={namaBarangRekomendasi}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.namaBarang}
       />
     </View>
-    
   );
 }
