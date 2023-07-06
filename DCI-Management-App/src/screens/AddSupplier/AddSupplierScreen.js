@@ -45,7 +45,7 @@ export default function AddStockScreen(props) {
       });
       PTArray.sort();
       setPTList(PTArray);
-      console.log('Nama PT Supplier dalam data:', PTList);
+      //console.log('Nama PT Supplier dalam data:', PTList);
     } catch (error) {
       console.log('Terjadi kesalahan saat mengambil data dari Firebase:', error);
     }
@@ -56,6 +56,23 @@ export default function AddStockScreen(props) {
   }, []);
 
   const handleAddSupplier = async () => {
+    const supplierRef = collection(db, 'Supplier');
+    
+    // Mengecek apakah namaSupplier sudah ada dalam database
+    const supplierQuery = await getDocs(query(supplierRef, where('NamaSupplier', '==', nama)));
+    if (!supplierQuery.empty) {
+      console.log('Nama Supplier sudah ada dalam database');
+      return; // Menghentikan proses jika sudah ada
+    }
+    
+    // Mengecek apakah namaPT sudah ada dalam database
+    const PTQuery = await getDocs(query(supplierRef, where('NamaPT', '==', PT)));
+    if (!PTQuery.empty) {
+      console.log('Nama PT sudah ada dalam database');
+      return; // Menghentikan proses jika sudah ada
+    }
+  
+    // Menambahkan data ke database
     const data = {
       NamaSupplier: nama,
       NamaPT: PT,
@@ -64,7 +81,7 @@ export default function AddStockScreen(props) {
     };
   
     try {
-      const docRef = await addDoc(collection(db, 'Supplier'), data);
+      const docRef = await addDoc(supplierRef, data);
       console.log('Data berhasil disimpan di Firestore dengan ID:', docRef.id);
     } catch (error) {
       console.log('Terjadi kesalahan saat menyimpan data ke Firestore:', error);
@@ -74,9 +91,9 @@ export default function AddStockScreen(props) {
     setPT('');
     setNoTelp('');
     setAlamat('');
-    
+  
     navigation.navigate('Home');
-  };    
+  };   
 
   const handleCancel = () => {
     setNama('');

@@ -78,7 +78,7 @@ export default function SearchScreen(props) {
       <FlatList
         vertical
         showsVerticalScrollIndicator={false}
-        numColumns={1} // Menggunakan 1 kolom
+        numColumns={1}
         data={data}
         renderItem={renderRecipes}
         keyExtractor={(item) => `${item.recipeId}`}
