@@ -1,2 +1,2 @@
-# InventarisGudang
- Aplikasi Inventaris Gudang PT Dapoer Creative Indonesia
+# DCI Management App
+ Aplikasi Manajemen Produksi PT Dapoer Creative Indonesia
