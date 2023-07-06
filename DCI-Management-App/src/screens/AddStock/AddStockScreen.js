@@ -2,26 +2,21 @@ import React, { useState, useLayoutEffect, useEffect } from 'react';
 import { View, Text, TouchableOpacity, TextInput, FlatList, Image } from 'react-native';
 import styles from './styles';
 import MenuImage from "../../components/MenuImage/MenuImage";
-//import * as ImagePicker from 'expo-image-picker';
 import { auth, db } from '../Login/LoginScreen';
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, doc, getDocs } from 'firebase/firestore';
 
-const dummyNamaBarang = ['Barang 1', 'Barang 2', 'Barang 3', 'Barang 4', 'Barang 5'];
-
-const dummySupplier = ['Supplier 1', 'Supplier 2', 'Supplier 3', 'Supplier 4', 'Supplier 5'];
-
-export default function AddScreen(props) {
+export default function AddStockScreen(props) {
   const [nama, setNama] = useState('');
   const [supplier, setSupplier] = useState('');
   const [jumlah, setJumlah] = useState(0);
-  const [foto, setFoto] = useState(null);
   const [keterangan, setKeterangan] = useState('');
   const [barangBaru, setBarangBaru] = useState(true);
-  const [barangSisa, setBarangSisa] = useState(false);
   const [isNamaActive, setIsNamaActive] = useState(false); 
   const [isSupplierActive, setIsSupplierActive] = useState(false); 
   const [namaBarangRekomendasi, setNamaBarangRekomendasi] = useState([]);
   const [supplierRekomendasi, setSupplierRekomendasi] = useState([]);
+  const [namaBarangList, setNamaBarangList] = useState([]);
+  const [supplierList, setSupplierList] = useState([]);
 
   const { navigation } = props;
 
@@ -41,19 +36,60 @@ export default function AddScreen(props) {
     });
   }, []);
 
+  const fetchInventory = async () => {
+    try {
+      const inventorySnapshot = await getDocs(collection(db, 'Inventory'));
+      const namaBarangArray = [];
+      inventorySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const namaBarang = data?.NamaBarang;
+        if (namaBarang) {
+          namaBarangArray.push(namaBarang);
+        }
+      });
+      namaBarangArray.sort();
+      setNamaBarangList(namaBarangArray);
+      console.log('Nama Barang dalam Inventory:', namaBarangArray);
+    } catch (error) {
+      console.log('Terjadi kesalahan saat mengambil data dari Firebase:', error);
+    }
+  };
+
+  const fetchSupplier = async () => {
+    try {
+      const supplierSnapshot = await getDocs(collection(db, 'Supplier'));
+      const supplierArray = [];
+      supplierSnapshot.forEach((doc) => {
+        const data = doc.data();
+        const namaSupplier = data?.NamaSupplier;
+        if (namaSupplier) {
+          supplierArray.push(namaSupplier);
+        }
+      });
+      supplierArray.sort();
+      setSupplierList(supplierArray);
+      console.log('Nama Supplier dalam data:', supplierArray);
+    } catch (error) {
+      console.log('Terjadi kesalahan saat mengambil data dari Firebase:', error);
+    }
+  };
+  
+  useEffect(() => {
+    fetchInventory();
+    fetchSupplier();
+  }, []);
+
   const handleAddStock = async () => {
     const data = {
-      nama: nama,
-      supplier: supplier,
-      jumlah: jumlah,
-      foto: foto,
-      keterangan: keterangan,
-      barangBaru: barangBaru,
-      barangSisa: barangSisa,
+      NamaBarang: nama,
+      NamaSupplier: supplier,
+      Jumlah: jumlah,
+      Keterangan: keterangan,
+      Status: barangBaru,
     };
   
     try {
-      const docRef = await addDoc(collection(db, 'record'), data);
+      const docRef = await addDoc(collection(db, 'Inventory'), data);
       console.log('Data berhasil disimpan di Firestore dengan ID:', docRef.id);
     } catch (error) {
       console.log('Terjadi kesalahan saat menyimpan data ke Firestore:', error);
@@ -62,30 +98,27 @@ export default function AddScreen(props) {
     setNama('');
     setSupplier('');
     setJumlah(0);
-    setFoto(null);
     setKeterangan('');
   
     if (!barangBaru) {
       setBarangBaru(true);
-      setBarangSisa(false);
     }
   
-    navigation.navigate('Record');
+    navigation.navigate('Home');
   };    
 
   const handleCancel = () => {
     setNama('');
     setSupplier('');
     setJumlah(0);
-    setFoto(null);
     setKeterangan('');
 
     if (!barangBaru) {
       setBarangBaru(true);
       setBarangSisa(false);
     }
-
-    navigation.navigate('Record');
+    
+    navigation.navigate('Home');
   };
 
   const handleIncreaseJumlah = () => {
@@ -104,19 +137,26 @@ export default function AddScreen(props) {
 
   const handleNamaChange = (text) => {
     setNama(text);
-    const filteredNamaBarang = dummyNamaBarang.filter((item) =>
+    let filteredNamaBarang = namaBarangList.filter((item) =>
       item.toLowerCase().includes(text.toLowerCase())
     );
+    if (text === '') {
+      filteredNamaBarang = [];
+    }
     setNamaBarangRekomendasi(filteredNamaBarang);
   };
-
+  
   const handleSupplierChange = (text) => {
     setSupplier(text);
-    const filteredSupplier = dummySupplier.filter((item) =>
+    let filteredSupplier = supplierList.filter((item) =>
       item.toLowerCase().includes(text.toLowerCase())
     );
+    if (text === '') {
+      filteredSupplier = [];
+    }
     setSupplierRekomendasi(filteredSupplier);
   };
+  
 
   const renderNamaBarangRekomendasi = ({ item }) => (
     <TouchableOpacity onPress={() => setNama(item)}>
@@ -150,6 +190,7 @@ export default function AddScreen(props) {
           renderItem={renderNamaBarangRekomendasi}
           keyExtractor={(item) => item}
           style={styles.rekomendasiContainer}
+          keyboardShouldPersistTaps="always"
         />
       )}
       <TextInput
@@ -170,27 +211,17 @@ export default function AddScreen(props) {
           renderItem={renderSupplierRekomendasi}
           keyExtractor={(item) => item}
           style={styles.rekomendasiContainer}
+          keyboardShouldPersistTaps="always"
         />
       )}
       <TouchableOpacity
         style={styles.checkboxContainer}
         onPress={() => {
           setBarangBaru(!barangBaru);
-          setBarangSisa(!barangSisa);
         }}
       >
         <Text style={styles.checkboxText}>Barang Baru?</Text>
         <Text style={styles.checkboxIcon}>{barangBaru ? '✓' : ''}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.checkboxContainer}
-        onPress={() => {
-          setBarangBaru(!barangBaru);
-          setBarangSisa(!barangSisa);
-        }}
-      >
-        <Text style={styles.checkboxText}>Barang Sisa?</Text>
-        <Text style={styles.checkboxIcon}>{barangSisa ? '✓' : ''}</Text>
       </TouchableOpacity>
       <View style={styles.jumlahContainer}>
         <Text style={styles.jumlahText}>Jumlah</Text>
@@ -225,34 +256,3 @@ export default function AddScreen(props) {
     </View>
   );
 }
-
-/*
-const handleImagePicker = async () => {
-    try {
-      const { assets, canceled } = await ImagePicker.launchImageLibraryAsync();
-      if (!canceled && assets.length > 0) {
-        const image = assets[0];
-        setFoto(image.uri);
-      }
-    } catch (error) {
-      console.log('Error selecting image:', error);
-    }
-  };    
-
-  const handleRemovePicture = () => {
-    setFoto(null);
-  };  
-
-<TouchableOpacity style={styles.imageButton} onPress={handleImagePicker}>
-        {foto ? (
-          <>
-            <Image source={{ uri: foto }} style={styles.imagePreview} />
-            <TouchableOpacity style={styles.removePictureButton} onPress={handleRemovePicture}>
-              <Text style={styles.removePictureButtonText}>Remove Picture</Text>
-            </TouchableOpacity>
-          </>
-        ) : (
-          <Text style={styles.imageButtonText}>Select Image</Text>
-        )}
-      </TouchableOpacity>
-*/
