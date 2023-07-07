@@ -81,5 +81,9 @@ export default function HomeScreen(props) {
       <Text>Open up App.js to start working on your app!</Text>
       <StatusBar style="auto" />
     </View>
-  );
+      <View>
+          <Text>Open up App.js to start working on your app!</Text>
+        <StatusBar style="auto" />
+      </View>
+    );
 }
