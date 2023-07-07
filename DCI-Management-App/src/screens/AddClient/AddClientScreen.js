@@ -70,6 +70,7 @@ export default function AddStockScreen(props) {
       NamaClient: nama,
       NamaPT: PT,
       NoTelp: noTelp,
+      Email: Email,
       Alamat: alamat,
     };
   
