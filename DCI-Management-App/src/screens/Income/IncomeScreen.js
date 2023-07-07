@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { FlatList, Text, View, TouchableHighlight, Image, ScrollView, Touchable, StatusBar } from "react-native";
+import { Text, View, TouchableOpacity, StatusBar } from "react-native";
 import styles from "./styles";
 import MenuImage from "../../components/MenuImage/MenuImage";
 import { db, auth } from "../Login/LoginScreen";
@@ -29,28 +29,32 @@ export default function HomeScreen(props) {
     checkAdminStatus();
   }, []);
 
-  const checkAdminStatus = () => {
+  const checkAdminStatus = async () => {
     const user = auth.currentUser;
     if (user) {
-      db.collection("Users")
-        .doc(user.uid)
-        .get()
-        .then((doc) => {
-          if (doc.exists) {
-            const userData = doc.data();
-            setIsAdmin(userData.status === "admin");
-          }
-        })
-        .catch((error) => {
-          console.log("Error checking admin status:", error);
-        });
+      try {
+        const userDoc = await getDoc(doc(db, 'Users', user.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setIsAdmin(userData.Status === "Admin");
+        }
+      } catch (error) {
+        console.log("Error checking admin status:", error);
+      }
     }
+  };
+
+  const handleGoBack = () => {
+    navigation.navigate("Home");
   };
 
   if (!isAdmin) {
     return (
       <View style={styles.container}>
         <Text>Access denied. You must be an admin to view this screen.</Text>
+        <TouchableOpacity onPress={handleGoBack} style={styles.button}>
+          <Text style={styles.buttonText}>Home</Text>
+        </TouchableOpacity>
         <StatusBar style="auto" />
       </View>
     );
