@@ -17,11 +17,6 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
   },
-  separator: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    marginBottom: 20,
-  },
   listContainer: {
     marginBottom: 20,
     alignItems: 'center',
@@ -51,6 +46,21 @@ const styles = StyleSheet.create({
     padding: 10,
     width: '45%',
     alignItems: 'center',
+  },
+  separator: {
+    height: 1,
+    backgroundColor: 'gray',
+    marginBottom: 10,
+  },
+  passwordVisibilityButton: {
+    color: 'blue',
+    textDecorationLine: 'underline',
+    marginBottom: 10,
+  },
+  status: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
 });
 
