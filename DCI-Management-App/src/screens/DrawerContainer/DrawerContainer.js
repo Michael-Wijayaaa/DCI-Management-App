@@ -19,6 +19,11 @@ export default function DrawerContainer(props) {
       .catch(error => alert(error.message));
   };
 
+  const handleAddClient = () => {
+    navigation.navigate("Add Client");
+    navigation.closeDrawer();
+  };
+
   const { navigation } = props;
 
   const toggleProductionGroup = () => {
@@ -61,7 +66,15 @@ export default function DrawerContainer(props) {
         />
         {isMarketingGroupOpen && (
           <View style={styles.DropList}>
-            <Text>Coming Soon!</Text>
+            
+            <MenuButton
+             title="ADD CLIENT"
+             source={require("../../../assets/icons/addclient.png")}
+             onPress={() => {
+               navigation.navigate("Add Client");
+               navigation.closeDrawer();
+             }}
+            />
           </View>
         )}
 
@@ -158,5 +171,6 @@ export default function DrawerContainer(props) {
 DrawerContainer.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
+    closeDrawer: PropTypes.func.isRequired,
   }),
 };
